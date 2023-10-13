@@ -1,0 +1,103 @@
+---
+title: "p8105_hw3_geg2145"
+author: "Gustavo Garcia-Franceschini"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Problem 1
+
+```{r p1_data}
+library(p8105.datasets)
+data("instacart")
+```
+
+The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and giving illustrative examples of observations. Then, do or answer the following (commenting on the results of each):
+
+How many aisles are there, and which aisles are the most items ordered from?
+
+```{r p1_q1}
+instacart %>%
+  group_by(aisle) %>%
+  summarize(items_ordered = n()) %>%
+  arrange(desc(items_ordered)) %>% 
+  head(4)
+```
+
+
+Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+
+```{r p1_plot}
+instacart %>%
+  group_by(aisle) %>%
+  summarize(items_ordered = n()) %>%
+  arrange(desc(items_ordered)) %>%
+  filter(items_ordered > 10000) %>%
+  mutate(aisle = fct_reorder(aisle, items_ordered)) %>%
+  ggplot() + geom_point(aes(x = aisle, y = items_ordered)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
+
+```{r p1_table1}
+instacart %>%
+  filter(aisle == "baking ingredients" | 
+         aisle == "dog food care" |
+         aisle == "packaged vegetables fruits") %>%
+  group_by(aisle, product_name) %>%
+  summarize(times_ordered = n()) %>%
+  mutate(rank = min_rank(desc(times_ordered))) %>%
+  filter(rank <= 3) %>%
+  arrange(aisle, rank) %>%
+  knitr::kable()
+```
+
+    
+Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+
+```{r p1_table2}
+instacart %>%
+  filter(product_name == "Pink Lady Apples" | 
+         product_name == "Coffee Ice Cream") %>%
+  group_by(product_name, order_dow) %>%
+  summarize(mean_hour = mean(order_hour_of_day)) %>%
+  pivot_wider(names_from = order_dow, 
+              values_from = mean_hour) %>%
+  knitr::kable()
+```
+
+
+
+# Problem 2
+
+```{r p2_data}
+library(p8105.datasets)
+data("brfss_smart2010")
+```
+
+First, do some data cleaning:
+
+- format the data to use appropriate variable names;
+- focus on the “Overall Health” topic
+- include only responses from “Excellent” to “Poor”
+- organize responses as a factor taking levels ordered from “Poor” to “Excellent”
+
+```{r p2_data_cleaning}
+brfss_smart2010 = brfss_smart2010 %>%
+  janitor::clean_names()
+```
+
+
+Using this dataset, do or answer the following (commenting on the results of each):
+
+    In 2002, which states were observed at 7 or more locations? What about in 2010?
+    Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. Make a “spaghetti” plot of this average value over time within a state (that is, make a plot showing a line for each state across years – the geom_line geometry and group aesthetic will help).
+    Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
+
+
