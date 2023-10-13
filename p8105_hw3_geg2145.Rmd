@@ -90,7 +90,9 @@ First, do some data cleaning:
 
 ```{r p2_data_cleaning}
 brfss_smart2010 = brfss_smart2010 %>%
-  janitor::clean_names()
+  janitor::clean_names() %>%
+  filter(topic == "Overall Health" &
+           !is.na(response))
 ```
 
 
