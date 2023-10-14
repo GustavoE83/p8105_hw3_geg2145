@@ -121,6 +121,7 @@ brfss_smart2010 %>%
   summarize(unique_locations = length(unique(locationdesc))) %>%
   filter(unique_locations >= 7)
 ```
+**While only 6 states where observed in seven or more locations in 2002 (Connecticut, Florida, Massachusetts, North Carolina, New Jersey and Pennsylvania), 14 states did the same in 2010 (including the same 6 that completed the feature in 2002).**
     
 - Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. Make a “spaghetti” plot of this average value over time within a state (that is, make a plot showing a line for each state across years – the geom_line geometry and group aesthetic will help).
 
@@ -131,9 +132,12 @@ brfss_smart2010 %>%
   summarize(mean_value = mean(data_value))  %>%
   arrange(desc(year)) %>%
   ggplot() + geom_line(aes(x = year, y = mean_value,
-                            group = locationabbr))
-
+                            group = locationabbr)) +
+  labs(y = "Mean values across locations", x= "Year", 
+       title = "There is a decrease in value between 2002 and 2005 before stabilizing")
 ```
+
+**The general trend for all states is that the mean value across locations decreased from 2002 to 2005, but then stabilized from then to 2010.**
     
     
 - Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
@@ -143,8 +147,13 @@ brfss_smart2010 %>%
   filter(locationabbr == "NY" & (year == 2006 | year == 2010))  %>%
   mutate(year = factor(year, levels = c("2006", "2010")))  %>%
   ggplot() + geom_density(aes(x = data_value, fill = response), alpha= 0.5) +
-  facet_grid( ~ year)
+  facet_grid( ~ year) + 
+  labs(x= "Value", y = "Density", 
+       title = "Distribution of values in 2006 and 2010 was very similar", 
+       fill = "Response")
 ```
+
+**In both 2006 and 2010, the lowest values correspond to "Poor" responses, while "Fair" and "Excellent" responses follow. In both years, "Good" and "Very Good" responses follow. In 2010, there are less "Poor" responses than in 2006.**
 
 # Problem 3
 
