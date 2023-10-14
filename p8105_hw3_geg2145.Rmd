@@ -15,9 +15,10 @@ library(p8105.datasets)
 
 ```{r p1_data}
 data("instacart")
+head(instacart, 4)
 ```
 
-The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and giving illustrative examples of observations. Then, do or answer the following (commenting on the results of each):
+**The dataset has `r nrow(instacart)` rows and `r ncol(instacart)` variables, where every row is a product ordered. Every product ordered has an `order_id` (it is possible for multiple products to be bought as part of the same order) a `product_name` and an `aisle` name. We can also see the day of the week and hour the order was processed (`order_dow` and `order_hour_of_day`, respectively).**
 
 How many aisles are there, and which aisles are the most items ordered from?
 
@@ -29,6 +30,7 @@ instacart %>%
   head(4)
 ```
 
+**There are `r length(unique(pull(instacart, aisle)))` different aisles, with most of the orders being in the "fresh vegetables", "fresh fruits", "packaged vegetables fruits" and "yogurt" aisles.**
 
 Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
 
@@ -40,8 +42,12 @@ instacart %>%
   filter(items_ordered > 10000) %>%
   mutate(aisle = fct_reorder(aisle, items_ordered)) %>%
   ggplot() + geom_point(aes(x = aisle, y = items_ordered)) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title= "Best selling aisles sell food and perishables",
+       x="Aisle", "Items Ordered")
 ```
+
+**We can also see here how most of the orders are from the "fresh vegetables", "fresh fruits", "packaged vegetables fruits" and "yogurt" aisles. We can also see "butter", "oils and vinegars" and "dry pasta" are the aisles least bought from. We also see how most of the aisles (about two thirds) have less than 20,000 orders, and then the number of orders increases exponentially. The aisles with the most orders usually hold food that is consumed often (like water) and/or goes bad easily (like milk).**
 
 Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
 
@@ -57,6 +63,7 @@ instacart %>%
   arrange(aisle, rank) %>%
   knitr::kable()
 ```
+**The best selling baking ingredient is light brown sugar, while the best selling packaged vegetables and fruits is organic baby spinach. The three highest selling dog food care times have similar order counts.**
 
     
 Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
@@ -72,7 +79,7 @@ instacart %>%
   knitr::kable()
 ```
 
-
+**Coffee Ice Cream is bought in the afternoon (around lunchtime) regardless of the day, while pink lady apples are bought before noon on Mondays, Tuesdays, Thursdays and Saturdays.**
 
 # Problem 2
 
