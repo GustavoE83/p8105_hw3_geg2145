@@ -15,7 +15,8 @@ library(p8105.datasets)
 
 ```{r p1_data}
 data("instacart")
-head(instacart, 4)
+head(instacart, 4) %>%
+  knitr::kable()
 ```
 
 **The dataset has `r nrow(instacart)` rows and `r ncol(instacart)` variables, where every row is a product ordered. Every product ordered has an `order_id` (it is possible for multiple products to be bought as part of the same order) a `product_name` and an `aisle` name. We can also see the day of the week and hour the order was processed (`order_dow` and `order_hour_of_day`, respectively).**
@@ -113,13 +114,15 @@ brfss_smart2010 %>%
   filter(year == 2002) %>%
   group_by(locationabbr) %>%
   summarize(unique_locations = length(unique(locationdesc))) %>%
-  filter(unique_locations >= 7)
+  filter(unique_locations >= 7) %>%
+  knitr::kable(caption = "States observed at 7 or more locations in 2002")
 
 brfss_smart2010 %>%
   filter(year == 2010) %>%
   group_by(locationabbr) %>%
   summarize(unique_locations = length(unique(locationdesc))) %>%
-  filter(unique_locations >= 7)
+  filter(unique_locations >= 7)%>%
+  knitr::kable(caption = "States observed at 7 or more locations in 2010")
 ```
 **While only 6 states where observed in seven or more locations in 2002 (Connecticut, Florida, Massachusetts, North Carolina, New Jersey and Pennsylvania), 14 states did the same in 2010 (including the same 6 that completed the feature in 2002).**
     
@@ -195,8 +198,13 @@ df_dem %>%
   knitr::kable()
 
 df_dem %>%
-  ggplot() + geom_bar(aes(x = education, fill = sex))
+  ggplot() + geom_bar(aes(x = education, fill = sex)) + 
+  labs(y = "Count", x = "Education", 
+       title = "Most of the subjects have more than high school education",
+       subtitle = "Males and females are evenly distributed in two of the three education levels")
 ```
+
+**We can see from the bar plot that most of the subjects in the study had more than a high school education (about 50% of the study). Although the distribution of sex in the groups of "less than high school" and "more than high school" education is pretty much even, the study had twelve more males with a "high school equivalent" than females with the same level of education.**
 
 Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
 
@@ -208,8 +216,12 @@ df_mims %>%
                             color = sex), alpha = .5) +
   geom_smooth(aes(y = total_activity, x = age, 
                             color = sex),se = FALSE) +
-  facet_grid( ~ education)
+  facet_grid( ~ education) + 
+  labs(x = "Age", y = "Total activity", 
+       title = "Male subjects were more active only among those without HS education", color = "Sex")
 ```
+
+**In this plot, we see that female subjects had higher activity levels regardless of age when the subjects had either a high school education, or higher. This includes a very high difference between female and male subjects with a high school education and at around 40 years of age, and among those 60 years of age and with a level of education greater than high school. This trend is not true for subjects with less than high school, where males seemed to be more active. In general, those with an education greater than high school had constant activity levels, across age values, while the other education levels showed a steeper decline once subjects got to an older age.**
 
 
 Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
@@ -220,5 +232,10 @@ df_mims %>%
                             color = sex), alpha = .05, size = 0.5)+
   geom_smooth(aes(y = mims, x = minute, 
                             color = sex),se = FALSE) +
-  facet_grid( ~ education)
+  facet_grid( ~ education) +
+  labs(x = "Minute of the day", y= "Activity level (MIMS)",
+       title = "Subjects exhibited similar trends regardless of education level or sex",
+       color = "Sex")
 ```
+
+**In the plot, we can see that the subjects exhibited similar activity levels regardless of their level of education or sex: almost no activity at around 4 am, with most activity starting at around 5 am and the peak activity time being the usual 8 am to 8 pm. The biggest difference (albeit small) difference can be seen between female and male subjects with an education level greater than high school, where female subjects remained more active than male subjects throughout the day (on similar trends).**
